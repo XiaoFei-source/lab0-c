@@ -14,7 +14,11 @@
 /* Create an empty queue */
 struct list_head *q_new()
 {
-    return NULL;
+    struct list_head *new_qhead = malloc(sizeof(struct list_head));
+    if (!new_qhead)
+        return NULL;
+    INIT_LIST_HEAD(new_qhead);
+    return new_qhead;
 }
 
 /* Free all storage used by queue */
@@ -47,7 +51,14 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 /* Return number of elements in queue */
 int q_size(struct list_head *head)
 {
-    return -1;
+    if (!head)
+        return 0;
+
+    int size = 0;
+    struct list_head *cur;
+    list_for_each (cur, head)
+        size++;
+    return size;
 }
 
 /* Delete the middle node in queue */
