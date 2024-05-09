@@ -35,6 +35,17 @@ void q_free(struct list_head *head)
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
+    // This is not the right code below
+    // This is just for test
+    if (!head)
+        return 0;
+
+    int len = 0;
+    struct list_head *li;
+
+    list_for_each (li, head)
+        len++;
+    // return len;
     return true;
 }
 
@@ -75,17 +86,6 @@ int q_size(struct list_head *head)
 bool q_delete_mid(struct list_head *head)
 {
     // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
-    // This is not the right code below
-    // This is just for test
-    if (!head)
-        return 0;
-
-    int len = 0;
-    struct list_head *li;
-
-    list_for_each (li, head)
-        len++;
-    return len;
     // i give it another try .
     return true;
 }
