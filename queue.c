@@ -14,38 +14,15 @@
 /* Create an empty queue */
 struct list_head *q_new()
 {
-    struct list_head *head = malloc(sizeof(struct list_head));
-    if (!head)
-        return NULL;
-    INIT_LIST_HEAD(head);
     return NULL;
 }
 
 /* Free all storage used by queue */
-void q_free(struct list_head *head)
-{
-    if (!head)
-        return;
-    element_t *entry, *safe;
-    list_for_each_entry_safe (entry, safe, head, list)
-        q_release_element(entry);
-    free(head);
-}
+void q_free(struct list_head *head) {}
 
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
-    // This is not the right code below
-    // This is just for test
-    if (!head)
-        return 0;
-
-    int len = 0;
-    struct list_head *li;
-
-    list_for_each (li, head)
-        len++;
-    // return len;
     return true;
 }
 
@@ -70,23 +47,13 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 /* Return number of elements in queue */
 int q_size(struct list_head *head)
 {
-    if (!head)
-        return 0;
-
-    int len = 0;
-    struct list_head *li;
-
-    list_for_each (li, head)
-        len++;
-    return len;
-    // i give it another try .
+    return -1;
 }
 
 /* Delete the middle node in queue */
 bool q_delete_mid(struct list_head *head)
 {
     // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
-    // i give it another try .
     return true;
 }
 
