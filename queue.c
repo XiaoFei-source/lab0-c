@@ -172,15 +172,67 @@ bool q_delete_dup(struct list_head *head)
 void q_swap(struct list_head *head)
 {
     // https://leetcode.com/problems/swap-nodes-in-pairs/
+    if (!head || list_empty(head))
+        return;
+
+    struct list_head *first, *second;
+    list_for_each_safe (first, second, head) {
+        //遍歷節點，每一次以兩個為一組交換
+        if (second == head)
+            break;
+        first->prev->next = second;
+        second->prev = first->prev;
+        first->next = second->next;
+        first->prev = second;
+        second->next->prev = first;
+        second->next = first;
+
+        second = first->next;
+        //更新下一對要處理的節點
+    }
 }
 
 /* Reverse elements in queue */
-void q_reverse(struct list_head *head) {}
-
+void q_reverse(struct list_head *head)
+{
+    if (!head || list_empty(head))
+        return;
+    struct list_head *node, *safe;
+    list_for_each_safe (node, safe, head) {
+        node->next = node->prev;
+        node->prev = safe;
+    }
+    node->next = node->prev;
+    node->prev = safe;
+    //最後一個節點的運作方式不太確定？doubly linked
+    // list的最後一個節點的next應該要指向頭部
+    //所以,倒過來應該指向倒數第二個節點，
+    //此時的safe代表的第一個節點（頭部）？
+    return;
+}
 /* Reverse the nodes of the list k at a time */
 void q_reverseK(struct list_head *head, int k)
 {
     // https://leetcode.com/problems/reverse-nodes-in-k-group/
+    if (!head)
+        return;
+    int times = q_size(head) / k;
+    struct list_head *tail;
+    LIST_HEAD(tmp);
+    LIST_HEAD(new_head);
+
+    for (int i = 0; i < times; i++) {
+        int j = 0;
+        list_for_each (tail, head) {
+            if (j >= k)
+                break;
+            j++;
+        }
+        list_cut_position(&tmp, head, tail->prev);
+        q_reverse(&tmp);
+        list_splice_tail_init(&tmp, &new_head);
+    }
+    list_splice_init(&new_head, head);
 }
 
 /* Sort elements of queue in ascending/descending order */
