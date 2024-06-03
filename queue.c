@@ -236,41 +236,56 @@ void q_reverseK(struct list_head *head, int k)
 }
 
 /* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend)
+void merge(struct list_head *l_head,
+           struct list_head *r_head,
+           struct list_head *head)
 {
-    struct list_head list_less, list_greater;
-    element_t *pivot;
-    element_t *item = NULL, *tmp = NULL;
+    while (!list_empty(l_head) && !list_empty(r_head)) {
+        element_t *l_entry = list_entry(l_head->next, element_t, list);
+        element_t *r_entry = list_entry(r_head->next, element_t, list);
 
-    if (head == NULL || list_empty(head) || list_is_singular(head))
+        if (strcmp(l_entry->value, r_entry->value) <= 0)
+            list_move_tail(l_head->next, head);
+        else
+            list_move_tail(r_head->next, head);
+    }
+    if (!list_empty(l_head))
+        list_splice_tail_init(l_head, head);
+    else
+        list_splice_tail_init(r_head, head);
+}
+
+void merge_sort(struct list_head *head)
+{
+    if (!head || list_empty(head) || list_is_singular(head))
         return;
 
-    INIT_LIST_HEAD(&list_less);
-    INIT_LIST_HEAD(&list_greater);
+    // Find middle node
+    struct list_head *slow = head, *fast = head;
+    do {
+        fast = fast->next->next;
+        slow = slow->next;
+    } while (fast != head && fast->next != head);
 
-    pivot = list_first_entry(head, element_t, list);
-    list_del(&pivot->list);
+    LIST_HEAD(l_head);
+    LIST_HEAD(r_head);
 
-    list_for_each_entry_safe (item, tmp, head, list) {
-        if (descend == false) {
-            if (strcmp(item->value, pivot->value) < 0)
-                list_move_tail(&item->list, &list_less);
-            else
-                list_move_tail(&item->list, &list_greater);
-        } else {
-            if (strcmp(item->value, pivot->value) > 0)
-                list_move_tail(&item->list, &list_less);
-            else
-                list_move_tail(&item->list, &list_greater);
-        }
-    }
+    // Split list into two parts - Left and Right
+    list_splice_tail_init(head, &r_head);
+    list_cut_position(&l_head, &r_head, slow);
+    // Recursively split the left and right parts
+    merge_sort(&l_head);
+    merge_sort(&r_head);
+    // Merge the left and right parts
+    merge(&l_head, &r_head, head);
+}
+/* Sort elements of queue in ascending/descending order */
+void q_sort(struct list_head *head, bool descend)
+{
+    merge_sort(head);
 
-    q_sort(&list_less, descend);
-    q_sort(&list_greater, descend);
-
-    list_add(&pivot->list, head);
-    list_splice(&list_less, head);
-    list_splice_tail(&list_greater, head);
+    if (descend)
+        q_reverse(head);
 }
 
 /* Remove every node which has a node with a strictly less value anywhere to
